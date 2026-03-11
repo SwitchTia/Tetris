@@ -1,0 +1,363 @@
+import { useEffect, useMemo, useRef, useState } from "react";
+
+const ROWS = 20;
+const COLS = 10;
+const DROP_INTERVAL = 500;
+
+const TETROMINOES = [
+  {
+    id: 1,
+    name: "I",
+    color: "bg-cyan-400",
+    shape: [
+      [0, 0, 0, 0],
+      [1, 1, 1, 1],
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+    ],
+  },
+  {
+    id: 2,
+    name: "O",
+    color: "bg-yellow-400",
+    shape: [
+      [0, 1, 1, 0],
+      [0, 1, 1, 0],
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+    ],
+  },
+  {
+    id: 3,
+    name: "T",
+    color: "bg-purple-400",
+    shape: [
+      [0, 1, 0, 0],
+      [1, 1, 1, 0],
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+    ],
+  },
+  {
+    id: 4,
+    name: "S",
+    color: "bg-emerald-400",
+    shape: [
+      [0, 1, 1, 0],
+      [1, 1, 0, 0],
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+    ],
+  },
+  {
+    id: 5,
+    name: "Z",
+    color: "bg-red-400",
+    shape: [
+      [1, 1, 0, 0],
+      [0, 1, 1, 0],
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+    ],
+  },
+  {
+    id: 6,
+    name: "J",
+    color: "bg-blue-400",
+    shape: [
+      [1, 0, 0, 0],
+      [1, 1, 1, 0],
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+    ],
+  },
+  {
+    id: 7,
+    name: "L",
+    color: "bg-orange-400",
+    shape: [
+      [0, 0, 1, 0],
+      [1, 1, 1, 0],
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+    ],
+  },
+];
+
+const CELL_COLORS = {
+  0: "bg-board-900",
+  1: "bg-cyan-400",
+  2: "bg-yellow-400",
+  3: "bg-purple-400",
+  4: "bg-emerald-400",
+  5: "bg-red-400",
+  6: "bg-blue-400",
+  7: "bg-orange-400",
+};
+
+const SCORE_TABLE = [0, 100, 300, 500, 800];
+
+const emptyBoard = () =>
+  Array.from({ length: ROWS }, () => Array.from({ length: COLS }, () => 0));
+
+const rotateMatrix = (matrix) =>
+  matrix[0].map((_, col) => matrix.map((row) => row[col]).reverse());
+
+const cloneBoard = (board) => board.map((row) => [...row]);
+
+const canPlace = (board, shape, x, y) => {
+  for (let row = 0; row < shape.length; row += 1) {
+    for (let col = 0; col < shape[row].length; col += 1) {
+      if (!shape[row][col]) continue;
+      const nextX = x + col;
+      const nextY = y + row;
+      if (nextX < 0 || nextX >= COLS || nextY >= ROWS) return false;
+      if (nextY >= 0 && board[nextY][nextX]) return false;
+    }
+  }
+  return true;
+};
+
+const mergePiece = (board, piece) => {
+  const next = cloneBoard(board);
+  piece.shape.forEach((row, rowIndex) => {
+    row.forEach((cell, colIndex) => {
+      if (!cell) return;
+      const targetY = piece.y + rowIndex;
+      const targetX = piece.x + colIndex;
+      if (targetY >= 0 && targetY < ROWS) {
+        next[targetY][targetX] = piece.id;
+      }
+    });
+  });
+  return next;
+};
+
+const clearLines = (board) => {
+  const remaining = board.filter((row) => row.some((cell) => cell === 0));
+  const cleared = ROWS - remaining.length;
+  const newRows = Array.from({ length: cleared }, () =>
+    Array.from({ length: COLS }, () => 0)
+  );
+  return {
+    board: [...newRows, ...remaining],
+    cleared,
+  };
+};
+
+const randomPiece = () => {
+  const template = TETROMINOES[Math.floor(Math.random() * TETROMINOES.length)];
+  return {
+    id: template.id,
+    color: template.color,
+    shape: template.shape.map((row) => [...row]),
+    x: Math.floor((COLS - 4) / 2),
+    y: -1,
+  };
+};
+
+export default function App() {
+  const [board, setBoard] = useState(() => emptyBoard());
+  const [active, setActive] = useState(() => randomPiece());
+  const [status, setStatus] = useState("idle");
+  const [score, setScore] = useState(0);
+  const intervalRef = useRef(null);
+
+  const displayBoard = useMemo(() => {
+    if (!active) return board;
+    return mergePiece(board, active);
+  }, [board, active]);
+
+  const startGame = () => {
+    const freshBoard = emptyBoard();
+    const nextPiece = randomPiece();
+    setBoard(freshBoard);
+    setScore(0);
+    if (!canPlace(freshBoard, nextPiece.shape, nextPiece.x, nextPiece.y)) {
+      setStatus("gameover");
+      return;
+    }
+    setActive(nextPiece);
+    setStatus("running");
+  };
+
+  const togglePause = () => {
+    setStatus((prev) => (prev === "running" ? "paused" : "running"));
+  };
+
+  const lockAndSpawn = (piece) => {
+    const lockedBoard = mergePiece(board, piece);
+    const { board: clearedBoard, cleared } = clearLines(lockedBoard);
+    setBoard(clearedBoard);
+    if (cleared > 0) {
+      setScore((prev) => prev + SCORE_TABLE[cleared]);
+    }
+
+    const nextPiece = randomPiece();
+    if (!canPlace(clearedBoard, nextPiece.shape, nextPiece.x, nextPiece.y)) {
+      setStatus("gameover");
+      return;
+    }
+    setActive(nextPiece);
+  };
+
+  const stepDown = () => {
+    if (!active) return;
+    if (canPlace(board, active.shape, active.x, active.y + 1)) {
+      setActive((prev) => ({ ...prev, y: prev.y + 1 }));
+      return;
+    }
+    lockAndSpawn(active);
+  };
+
+  const moveHorizontally = (direction) => {
+    if (!active) return;
+    const nextX = active.x + direction;
+    if (canPlace(board, active.shape, nextX, active.y)) {
+      setActive((prev) => ({ ...prev, x: nextX }));
+    }
+  };
+
+  const rotate = () => {
+    if (!active) return;
+    const rotated = rotateMatrix(active.shape);
+    if (canPlace(board, rotated, active.x, active.y)) {
+      setActive((prev) => ({ ...prev, shape: rotated }));
+      return;
+    }
+    if (canPlace(board, rotated, active.x - 1, active.y)) {
+      setActive((prev) => ({ ...prev, shape: rotated, x: prev.x - 1 }));
+      return;
+    }
+    if (canPlace(board, rotated, active.x + 1, active.y)) {
+      setActive((prev) => ({ ...prev, shape: rotated, x: prev.x + 1 }));
+    }
+  };
+
+  const hardDrop = () => {
+    if (!active) return;
+    let nextY = active.y;
+    while (canPlace(board, active.shape, active.x, nextY + 1)) {
+      nextY += 1;
+    }
+    const landed = { ...active, y: nextY };
+    setActive(landed);
+    lockAndSpawn(landed);
+  };
+
+  useEffect(() => {
+    if (status !== "running") return;
+    intervalRef.current = setInterval(stepDown, DROP_INTERVAL);
+    return () => clearInterval(intervalRef.current);
+  }, [status, active, board]);
+
+  useEffect(() => {
+    const handleKey = (event) => {
+      if (status === "idle") return;
+      if (status === "gameover") return;
+      if (status === "paused") {
+        if (event.code === "KeyP") togglePause();
+        return;
+      }
+      switch (event.code) {
+        case "ArrowLeft":
+          moveHorizontally(-1);
+          break;
+        case "ArrowRight":
+          moveHorizontally(1);
+          break;
+        case "ArrowDown":
+          stepDown();
+          break;
+        case "ArrowUp":
+        case "KeyX":
+          rotate();
+          break;
+        case "Space":
+          event.preventDefault();
+          hardDrop();
+          break;
+        case "KeyP":
+          togglePause();
+          break;
+        default:
+          break;
+      }
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [status, active, board]);
+
+  const statusLabel =
+    status === "running"
+      ? "Running"
+      : status === "paused"
+      ? "Paused"
+      : status === "gameover"
+      ? "Game Over"
+      : "Ready";
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 px-4 py-10 text-slate-100">
+      <div className="mx-auto flex w-full max-w-5xl flex-col gap-8 lg:flex-row lg:items-start">
+        <div className="flex-1">
+          <h1 className="font-display text-4xl uppercase tracking-wide text-white">Brick Drop</h1>
+          <p className="mt-2 text-sm text-slate-300">
+            Classic Tetris with a clean, minimal HUD. Use arrows to move, Up or X to
+            rotate, Space for hard drop, and P to pause.
+          </p>
+
+          <div className="mt-6 inline-flex items-center gap-3 rounded-full border border-slate-700 bg-slate-900/60 px-4 py-2 text-xs uppercase tracking-widest">
+            <span className="text-slate-400">Status</span>
+            <span className="font-semibold text-white">{statusLabel}</span>
+          </div>
+
+          <div className="mt-6 flex flex-wrap items-center gap-3">
+            <button
+              type="button"
+              onClick={startGame}
+              className="rounded-full bg-white px-5 py-2 text-xs font-semibold uppercase tracking-widest text-slate-900 transition hover:-translate-y-0.5 hover:bg-slate-200"
+            >
+              {status === "gameover" ? "Restart" : "Start"}
+            </button>
+            <button
+              type="button"
+              onClick={togglePause}
+              className="rounded-full border border-slate-600 px-5 py-2 text-xs font-semibold uppercase tracking-widest text-white transition hover:-translate-y-0.5 hover:border-slate-300"
+              disabled={status !== "running" && status !== "paused"}
+            >
+              {status === "paused" ? "Resume" : "Pause"}
+            </button>
+          </div>
+        </div>
+
+        <div className="flex flex-1 flex-col items-center gap-4">
+          <div className="flex w-full items-center justify-between">
+            <div className="rounded-xl border border-slate-800 bg-board-800 px-4 py-3">
+              <p className="text-xs uppercase tracking-widest text-slate-400">Score</p>
+              <p className="mt-1 font-display text-3xl text-white">{score}</p>
+            </div>
+            <div className="rounded-xl border border-slate-800 bg-board-800 px-4 py-3 text-right">
+              <p className="text-xs uppercase tracking-widest text-slate-400">Board</p>
+              <p className="mt-1 text-sm text-slate-200">{COLS} x {ROWS}</p>
+            </div>
+          </div>
+
+          <div
+            className="grid gap-1 rounded-2xl border border-slate-700 bg-board-900 p-3 shadow-2xl"
+            style={{ gridTemplateColumns: `repeat(${COLS}, minmax(0, 1fr))` }}
+          >
+            {displayBoard.map((row, rowIndex) =>
+              row.map((cell, colIndex) => (
+                <div
+                  key={`${rowIndex}-${colIndex}`}
+                  className={`h-6 w-6 rounded-sm border border-slate-800 ${CELL_COLORS[cell]}`}
+                />
+              ))
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
