@@ -97,6 +97,16 @@ const CELL_COLORS = {
   7: "bg-orange-400",
 };
 
+const CELL_GLOW = {
+  1: "rgba(34, 211, 238, 0.6)",
+  2: "rgba(250, 204, 21, 0.6)",
+  3: "rgba(192, 132, 252, 0.6)",
+  4: "rgba(34, 197, 94, 0.6)",
+  5: "rgba(239, 68, 68, 0.6)",
+  6: "rgba(59, 130, 246, 0.6)",
+  7: "rgba(249, 115, 22, 0.6)",
+};
+
 const SCORE_TABLE = [0, 100, 300, 500, 800];
 
 const emptyBoard = () =>
@@ -471,13 +481,13 @@ export default function App() {
   }, [nextBounds]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-[#0a0014] via-[#2a0650] to-[#0a0014] px-4 py-4 md:py-10 text-slate-100">
-      <div className="mx-auto flex w-full max-w-5xl flex-col gap-4 md:flex-row md:items-start md:gap-8">
+    <div className="min-h-screen bg-gradient-to-br from-[#05000d] via-[#1b0a3d] to-[#060012] px-3 py-2 md:px-4 md:py-10 text-slate-100">
+      <div className="mx-auto flex w-full max-w-5xl flex-col gap-2 md:flex-row md:items-start md:gap-8">
         <div className="order-1 flex-1 text-center pt-0 md:pt-[50px]">
           <h1 className="text-[20px] uppercase tracking-wide text-orange-400 md:text-4xl">
             Brick Drop
           </h1>
-          <p className="mt-2 text-xs text-slate-300 md:mt-4 md:text-sm">
+          <p className="mt-1 text-[10px] text-slate-200 md:mt-4 md:text-sm">
             <span className="hidden pb-6 md:block">Classic Tetris</span>
             <span className="hidden pb-10 pt-10 lg:block">
               Use arrows to move,
@@ -491,7 +501,7 @@ export default function App() {
           </p>
 
           {statusLabel !== "Ready" ? (
-            <div className="mt-3 text-[10px] uppercase tracking-widest text-slate-300 md:mt-8 md:text-xs">
+            <div className="mt-2 text-[10px] uppercase tracking-widest text-slate-200 md:mt-8 md:text-xs">
               Status:{" "}
               <span
                 className={`font-semibold ${
@@ -507,7 +517,7 @@ export default function App() {
             <button
               type="button"
               onClick={startGame}
-              className={`min-w-[110px] md:min-w-[140px] rounded-full border border-violet-400 bg-orange-400 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-widest transition hover:-translate-y-0.5 hover:bg-orange-300 md:px-5 md:py-2 md:text-xs ${
+              className={`min-w-[100px] md:min-w-[150px] rounded-full border border-orange-200/70 bg-orange-400/90 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-widest text-slate-950 shadow-[0_0_18px_rgba(249,115,22,0.45)] transition hover:-translate-y-0.5 hover:bg-orange-300 md:px-5 md:py-2 md:text-xs ${
                 status === "gameover" ? "text-[#0a0014]" : "text-slate-950"
               }`}
             >
@@ -516,7 +526,7 @@ export default function App() {
             <button
               type="button"
               onClick={togglePause}
-              className="min-w-[110px] md:min-w-[140px] rounded-full border border-violet-400 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-widest text-orange-400 transition hover:-translate-y-0.5 hover:border-violet-300 hover:bg-violet-400/20 hover:text-orange-300 md:px-5 md:py-2 md:text-xs"
+              className="min-w-[100px] md:min-w-[150px] rounded-full border border-violet-400/70 bg-white/5 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-widest text-orange-300 transition hover:-translate-y-0.5 hover:border-violet-300 hover:bg-white/10 hover:text-orange-200 md:px-5 md:py-2 md:text-xs"
               disabled={status !== "running" && status !== "paused"}
             >
               {status === "paused" ? "Resume" : "Pause"}
@@ -524,26 +534,26 @@ export default function App() {
           </div>
         </div>
 
-        <div className="order-3 flex flex-1 items-center justify-center gap-2 md:order-2 md:flex-none">
-          <div className="flex flex-col items-center gap-10 md:hidden">
+        <div className="order-3 flex flex-1 items-center justify-center gap-[15px] md:order-2 md:flex-none">
+          <div className="flex flex-col items-center gap-[50px] md:hidden">
             <button
               type="button"
               onClick={() => moveHorizontally(-1)}
-              className="h-10 w-16 rounded-full border border-violet-400 text-[10px] font-semibold uppercase tracking-widest text-orange-400"
+              className="h-9 w-14 rounded-full border border-violet-400/70 bg-white/5 text-[9px] font-semibold uppercase tracking-widest text-orange-300 shadow-[0_0_12px_rgba(124,70,255,0.35)]"
             >
               Left
             </button>
             <button
               type="button"
-              onClick={hardDrop}
-              className="h-10 w-16 rounded-full border border-violet-400 text-[10px] font-semibold uppercase tracking-widest text-orange-400"
+              onClick={stepDown}
+              className="h-9 w-14 rounded-full border border-violet-400/70 bg-white/5 text-[9px] font-semibold uppercase tracking-widest text-orange-300 shadow-[0_0_12px_rgba(124,70,255,0.35)]"
             >
-              Drop
+              Down
             </button>
           </div>
 
           <div
-            className="grid gap-0.5 rounded-2xl border border-violet-400 bg-board-900 p-1 shadow-2xl overflow-visible shrink-0 md:gap-1 md:p-2"
+            className="grid gap-0.5 rounded-2xl border border-violet-400/70 bg-black/40 p-1 shadow-[0_0_30px_rgba(92,60,160,0.4)] overflow-visible shrink-0 md:gap-1 md:p-2"
             style={{ gridTemplateColumns: `repeat(${COLS}, minmax(0, 1fr))` }}
           >
             {displayBoard.map((row, rowIndex) =>
@@ -554,9 +564,18 @@ export default function App() {
                 return (
                   <div
                     key={`${rowIndex}-${colIndex}`}
-                    className={`relative h-4 w-4 rounded-sm border border-orange-400/70 md:h-7 md:w-7 ${
-                      CELL_COLORS[cell]
+                    className={`relative h-3.5 w-3.5 rounded-sm md:h-7 md:w-7 ${
+                      cell === 0
+                        ? "bg-black/40 border border-white/5 shadow-[0_0_8px_rgba(255,255,255,0.06)]"
+                        : `${CELL_COLORS[cell]} border border-black/20`
                     } ${isFlashing ? "animate-pulse brightness-200" : ""}`}
+                    style={
+                      cell === 0
+                        ? undefined
+                        : {
+                            boxShadow: `0 0 10px ${CELL_GLOW[cell]}, 0 0 20px ${CELL_GLOW[cell]}`,
+                          }
+                    }
                   >
                     {isGhost ? (
                       <div className="h-full w-full rounded-sm border border-white/40 bg-white/10" />
@@ -567,18 +586,18 @@ export default function App() {
             )}
           </div>
 
-          <div className="flex flex-col items-center gap-10 md:hidden">
+          <div className="flex flex-col items-center gap-[50px] md:hidden">
             <button
               type="button"
               onClick={() => moveHorizontally(1)}
-              className="h-10 w-16 rounded-full border border-violet-400 text-[10px] font-semibold uppercase tracking-widest text-orange-400"
+              className="h-9 w-14 rounded-full border border-violet-400/70 bg-white/5 text-[9px] font-semibold uppercase tracking-widest text-orange-300 shadow-[0_0_12px_rgba(124,70,255,0.35)]"
             >
               Right
             </button>
             <button
               type="button"
               onClick={rotate}
-              className="h-10 w-16 rounded-full border border-violet-400 text-[10px] font-semibold uppercase tracking-widest text-orange-400"
+              className="h-9 w-14 rounded-full border border-violet-400/70 bg-white/5 text-[9px] font-semibold uppercase tracking-widest text-orange-300 shadow-[0_0_12px_rgba(124,70,255,0.35)]"
             >
               Rotate
             </button>
@@ -586,10 +605,10 @@ export default function App() {
         </div>
 
         <div className="order-2 mx-auto flex w-full max-w-none flex-row gap-1 pt-1 md:order-3 md:ml-5 md:mx-0 md:max-w-xs md:flex-col md:gap-4 md:pt-[50px]">
-          <div className="w-1/2 rounded-xl border border-violet-400 bg-board-800 p-1 flex flex-col items-center md:w-auto md:p-4 md:rounded-2xl">
-            <p className="text-xs uppercase tracking-widest text-slate-400">Next</p>
+          <div className="glass w-1/2 rounded-lg p-1 flex flex-col items-center md:w-auto md:p-4 md:rounded-2xl">
+            <p className="text-[9px] uppercase tracking-widest text-slate-300 md:text-xs">Next</p>
             <div
-              className="mt-1 inline-grid gap-0.5 rounded-lg bg-board-900 p-1 mb-2 md:mt-4 md:gap-1 md:p-2 md:mb-5 md:rounded-xl"
+              className="mt-1 inline-grid gap-0.5 rounded-lg bg-black/30 p-1 mb-1 md:mt-4 md:gap-1 md:p-2 md:mb-5 md:rounded-xl"
               style={{
                 gridTemplateColumns: `repeat(${nextPreviewDims.cols}, minmax(0, 1fr))`,
               }}
@@ -613,9 +632,18 @@ export default function App() {
                     return (
                         <div
                           key={`${row}-${col}`}
-                          className={`h-3.5 w-3.5 rounded-[3px] border border-orange-400/70 md:h-5 md:w-5 md:rounded-sm ${
-                            filled && nextPiece ? CELL_COLORS[nextPiece.id] : "bg-board-900"
+                          className={`h-3 w-3 rounded-[3px] md:h-5 md:w-5 md:rounded-sm ${
+                            filled && nextPiece
+                              ? `${CELL_COLORS[nextPiece.id]} border border-black/20`
+                              : "bg-black/40 border border-white/5 shadow-[0_0_6px_rgba(255,255,255,0.06)]"
                           }`}
+                          style={
+                            filled && nextPiece
+                              ? {
+                                  boxShadow: `0 0 10px ${CELL_GLOW[nextPiece.id]}, 0 0 20px ${CELL_GLOW[nextPiece.id]}`,
+                                }
+                              : undefined
+                          }
                         />
                     );
                   })
@@ -623,36 +651,36 @@ export default function App() {
             </div>
           </div>
 
-          <div className="w-1/2 rounded-xl border border-violet-400 bg-board-800 p-1 text-center md:w-auto md:p-4 md:rounded-2xl">
-            <p className="text-xs uppercase tracking-widest text-slate-400">
+          <div className="glass w-1/2 rounded-lg p-1 text-center md:w-auto md:p-4 md:rounded-2xl">
+            <p className="text-[9px] uppercase tracking-widest text-slate-300 md:text-xs">
               <span className="block pb-1 md:pb-6">Stats</span>
             </p>
-            <div className="grid grid-cols-2 gap-1 pb-1 text-[10px] text-slate-200 md:gap-3 md:pb-5 md:text-sm">
+            <div className="grid grid-cols-2 gap-1 pb-1 text-[8px] text-slate-300 md:gap-3 md:pb-5 md:text-sm">
               <div>
-                <p className="text-xs uppercase tracking-widest text-slate-400">Score</p>
-                <p className="mt-1 text-xs text-white md:font-display md:text-2xl">{score}</p>
+                <p className="text-[9px] uppercase tracking-widest text-slate-400 md:text-xs">Score</p>
+                <p className="mt-0.5 text-sm font-semibold text-white md:mt-1 md:font-display md:text-2xl">{score}</p>
               </div>
               <div>
-                <p className="text-xs uppercase tracking-widest text-slate-400">Board</p>
-                <p className="mt-1 text-xs text-white md:font-display md:text-2xl">
+                <p className="text-[9px] uppercase tracking-widest text-slate-400 md:text-xs">Board</p>
+                <p className="mt-0.5 text-sm font-semibold text-white md:mt-1 md:font-display md:text-2xl">
                   {COLS} x {ROWS}
                 </p>
               </div>
               <div>
-                <p className="text-xs uppercase tracking-widest text-slate-400">Level</p>
-                <p className="mt-1 text-xs text-white md:font-display md:text-2xl">{level}</p>
+                <p className="text-[9px] uppercase tracking-widest text-slate-400 md:text-xs">Level</p>
+                <p className="mt-0.5 text-sm font-semibold text-white md:mt-1 md:font-display md:text-2xl">{level}</p>
               </div>
               <div>
-                <p className="text-xs uppercase tracking-widest text-slate-400">Lines</p>
-                <p className="mt-1 text-xs text-white md:font-display md:text-2xl">{lines}</p>
+                <p className="text-[9px] uppercase tracking-widest text-slate-400 md:text-xs">Lines</p>
+                <p className="mt-0.5 text-sm font-semibold text-white md:mt-1 md:font-display md:text-2xl">{lines}</p>
               </div>
               <div>
-                <p className="text-xs uppercase tracking-widest text-slate-400">High</p>
-                <p className="mt-1 text-xs text-white md:font-display md:text-2xl">{highScore}</p>
+                <p className="text-[9px] uppercase tracking-widest text-slate-400 md:text-xs">High</p>
+                <p className="mt-0.5 text-sm font-semibold text-white md:mt-1 md:font-display md:text-2xl">{highScore}</p>
               </div>
               <div>
-                <p className="text-xs uppercase tracking-widest text-slate-400">Speed</p>
-                <p className="mt-1 text-xs text-white md:font-display md:text-2xl">
+                <p className="text-[9px] uppercase tracking-widest text-slate-400 md:text-xs">Speed</p>
+                <p className="mt-0.5 text-sm font-semibold text-white md:mt-1 md:font-display md:text-2xl">
                   {Math.round(1000 / dropInterval)}x
                 </p>
               </div>
