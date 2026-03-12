@@ -436,19 +436,27 @@ export default function App() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#12031f] via-[#1c0730] to-[#0b0016] px-4 py-10 text-slate-100">
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-8 lg:flex-row lg:items-start">
-        <div className="flex-1">
+        <div className="flex-1 text-center">
           <h1 className="font-display text-4xl uppercase tracking-wide text-white">Brick Drop</h1>
-          <p className="mt-2 text-sm text-slate-300">
+          <p className="mt-4 text-sm text-slate-300">
             <span className="block pb-6">Classic Tetris.</span>
-            Use arrows to move, Up or X to rotate, Space for hard drop, and P to pause.
+            <span className="block pb-10 pt-10">
+              Use arrows to move,
+              <br />
+              Up or X to rotate,
+              <br />
+              Space for hard drop,
+              <br />
+              and P to pause.
+            </span>
           </p>
 
-          <div className="mt-6 inline-flex items-center gap-3 rounded-full border border-violet-500/40 bg-violet-500/10 px-4 py-2 text-xs uppercase tracking-widest">
+          <div className="mt-8 inline-flex items-center gap-3 rounded-full border border-violet-400 bg-violet-500/10 px-4 py-2 text-xs uppercase tracking-widest">
             <span className="text-violet-200">Status</span>
             <span className="font-semibold text-white">{statusLabel}</span>
           </div>
 
-          <div className="mt-6 flex flex-wrap items-center gap-3">
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
             <button
               type="button"
               onClick={startGame}
@@ -459,7 +467,7 @@ export default function App() {
             <button
               type="button"
               onClick={togglePause}
-              className="rounded-full border border-violet-400 px-5 py-2 text-xs font-semibold uppercase tracking-widest text-violet-100 transition hover:-translate-y-0.5 hover:border-violet-200 hover:text-white"
+              className="rounded-full border border-violet-400 px-5 py-2 text-xs font-semibold uppercase tracking-widest text-violet-100 transition hover:-translate-y-0.5 hover:border-violet-300 hover:text-white"
               disabled={status !== "running" && status !== "paused"}
             >
               {status === "paused" ? "Resume" : "Pause"}
@@ -494,7 +502,7 @@ export default function App() {
         </div>
 
         <div className="w-full max-w-xs space-y-4">
-          <div className="rounded-2xl border border-violet-400/60 bg-board-800 p-4 flex flex-col items-center">
+          <div className="rounded-2xl border border-violet-400 bg-board-800 p-4 flex flex-col items-center">
             <p className="text-xs uppercase tracking-widest text-slate-400">Next</p>
             <div
               className="mt-4 inline-grid gap-1 rounded-xl bg-board-900 p-2"
@@ -533,7 +541,7 @@ export default function App() {
             </div>
           </div>
 
-          <div className="rounded-2xl border border-violet-400/60 bg-board-800 p-4">
+          <div className="rounded-2xl border border-violet-400 bg-board-800 p-4 text-center">
             <p className="text-xs uppercase tracking-widest text-slate-400">
               <span className="block pb-6">Stats</span>
             </p>
