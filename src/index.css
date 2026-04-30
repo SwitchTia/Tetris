@@ -6,8 +6,16 @@
   color-scheme: dark;
 }
 
+html,
+body,
+#root {
+  height: 100%;
+  overflow: hidden;
+}
+
 body {
   @apply bg-[#12031f] text-slate-100;
+  margin: 0;
   font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 }
 
