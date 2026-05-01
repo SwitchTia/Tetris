@@ -240,6 +240,23 @@ export default function App() {
     setStatus("running");
   };
 
+  const quitGame = () => {
+    if (clearTimeoutRef.current) {
+      clearTimeout(clearTimeoutRef.current);
+      clearTimeoutRef.current = null;
+    }
+    bagRef.current = [];
+    setBoard(emptyBoard());
+    setActive(randomPiece());
+    setNextPiece(randomPiece());
+    setScore(0);
+    setLines(0);
+    setLevel(0);
+    setFlashingRows([]);
+    setIsClearing(false);
+    setStatus("idle");
+  };
+
   const togglePause = () => {
     setStatus((prev) => (prev === "running" ? "paused" : "running"));
   };
@@ -535,7 +552,7 @@ export default function App() {
           </div>
         </section>
 
-        <section className="flex h-[40dvh] min-h-0 flex-col justify-center bg-black/10 px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-[clamp(1.1rem,3dvh,2rem)]">
+        <section className="flex h-[40dvh] min-h-0 flex-col justify-center bg-black/10 px-[clamp(0.75rem,4vw,1rem)] pb-[max(1rem,env(safe-area-inset-bottom))] pt-[clamp(1.1rem,3dvh,2rem)]">
           <div className="flex justify-center">
             <button
               type="button"
@@ -548,13 +565,13 @@ export default function App() {
             </button>
           </div>
 
-          <div className="grid min-h-0 flex-1 grid-cols-[1.1fr_0.9fr] items-center gap-4">
-            <div className="grid grid-cols-3 grid-rows-2 gap-[clamp(0.45rem,1.7dvh,0.9rem)]">
+          <div className="mx-auto grid min-h-0 w-full max-w-[min(22rem,calc(100vw-1.5rem))] flex-1 grid-cols-[55%_auto] items-center justify-center gap-[clamp(0.75rem,4vw,1.25rem)] -translate-x-[clamp(0.5rem,6vw,1.55rem)]">
+            <div className="grid min-w-0 grid-cols-3 grid-rows-2 justify-items-center gap-[clamp(0.45rem,1.4dvh,0.75rem)]">
               <button
                 type="button"
                 onClick={() => moveHorizontally(-1)}
                 disabled={status !== "running" || isClearing}
-                className="mobile-control-button flex h-[clamp(2.9rem,9dvh,4.75rem)] w-full items-center justify-center rounded-2xl text-3xl font-black text-slate-950 transition-transform"
+                className="mobile-control-button flex h-[clamp(2.75rem,8dvh,4rem)] w-[clamp(2.75rem,8dvh,4rem)] items-center justify-center rounded-2xl text-3xl font-black text-slate-950 transition-transform"
               >
                 ←
               </button>
@@ -562,7 +579,7 @@ export default function App() {
                 type="button"
                 onClick={hardDrop}
                 disabled={status !== "running" || isClearing}
-                className="mobile-control-button col-start-2 row-start-2 flex h-[clamp(2.9rem,9dvh,4.75rem)] w-full items-center justify-center rounded-2xl text-3xl font-black text-slate-950 transition-transform"
+                className="mobile-control-button col-start-2 row-start-2 flex h-[clamp(2.75rem,8dvh,4rem)] w-[clamp(2.75rem,8dvh,4rem)] items-center justify-center rounded-2xl text-3xl font-black text-slate-950 transition-transform"
               >
                 ↓
               </button>
@@ -570,18 +587,18 @@ export default function App() {
                 type="button"
                 onClick={() => moveHorizontally(1)}
                 disabled={status !== "running" || isClearing}
-                className="mobile-control-button col-start-3 flex h-[clamp(2.9rem,9dvh,4.75rem)] w-full items-center justify-center rounded-2xl text-3xl font-black text-slate-950 transition-transform"
+                className="mobile-control-button col-start-3 flex h-[clamp(2.75rem,8dvh,4rem)] w-[clamp(2.75rem,8dvh,4rem)] items-center justify-center rounded-2xl text-3xl font-black text-slate-950 transition-transform"
               >
                 →
               </button>
             </div>
 
-            <div className="grid grid-rows-2 gap-[clamp(0.45rem,1.7dvh,0.9rem)]">
+            <div className="flex h-full translate-x-[clamp(0.5rem,6vw,1.55rem)] -translate-y-[clamp(0.4rem,2dvh,0.95rem)] items-center justify-center">
               <button
                 type="button"
                 onClick={rotate}
                 disabled={status !== "running" || isClearing}
-                className="mobile-control-button flex h-[clamp(2.9rem,9dvh,4.75rem)] w-full items-center justify-center rounded-2xl text-3xl font-black text-slate-950 transition-transform"
+                className="mobile-control-button flex h-[clamp(4rem,12dvh,5.75rem)] w-[clamp(4rem,12dvh,5.75rem)] items-center justify-center rounded-full text-5xl font-black text-slate-950 transition-transform"
               >
                 ↻
               </button>
@@ -911,6 +928,13 @@ export default function App() {
               className="mt-7 w-full rounded-full border border-orange-200/70 bg-orange-400/95 px-6 py-3 text-sm font-semibold uppercase tracking-widest text-slate-950 shadow-[0_0_24px_rgba(249,115,22,0.48)] transition hover:-translate-y-0.5 hover:bg-orange-300 md:text-base"
             >
               Play Again
+            </button>
+            <button
+              type="button"
+              onClick={quitGame}
+              className="mt-3 rounded-full border border-red-200/70 bg-red-500/90 px-5 py-2 text-[11px] font-semibold uppercase tracking-widest text-white shadow-[0_0_18px_rgba(239,68,68,0.35)] transition hover:-translate-y-0.5 hover:bg-red-400 md:text-xs"
+            >
+              Quit Game
             </button>
           </div>
         </div>
