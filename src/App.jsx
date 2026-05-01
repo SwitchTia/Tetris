@@ -403,7 +403,7 @@ export default function App() {
   }, []);
   
   useEffect(() => {
-    const stored = window.localStorage.getItem("tetris_high_score");
+    const stored = window.localStorage.getItem("BrickDrop_high_score");
     if (stored) {
       const value = Number(stored);
       if (!Number.isNaN(value)) setHighScore(value);
@@ -413,7 +413,7 @@ export default function App() {
   useEffect(() => {
     if (score > highScore) {
       setHighScore(score);
-      window.localStorage.setItem("tetris_high_score", String(score));
+      window.localStorage.setItem("BrickDrop_high_score", String(score));
     }
   }, [score, highScore]);
 
@@ -487,18 +487,27 @@ export default function App() {
           <h1 className="text-2xl uppercase tracking-wide text-orange-400 md:text-5xl">
             Brick Drop
           </h1>
-          <p className="mt-1 text-xs text-slate-200 md:mt-5 md:text-base">
-            <span className="hidden pb-6 md:block">Classic Tetris</span>
-            <span className="hidden pb-10 pt-10 lg:block">
-              Use arrows to move,
-              <br />
-              Up or X to rotate,
-              <br />
-              Space for hard drop,
-              <br />
-              and P to pause.
-            </span>
-          </p>
+          <div className="mt-1 text-xs text-slate-200 md:mt-5 md:text-base">
+            <span className="hidden pb-6 md:block">Classic BrickDrop</span>
+            <div className="hidden pt-4 lg:flex lg:flex-col lg:items-center lg:gap-3 lg:text-xs lg:uppercase lg:tracking-widest lg:text-slate-300">
+              <div className="grid w-44 grid-cols-[5.5rem_1fr] items-center gap-3 text-left">
+                <span className="inline-flex min-w-[5.5rem] justify-center rounded-md border border-orange-200/70 bg-black/35 px-2 py-1 font-semibold text-orange-300 shadow-[0_0_10px_rgba(249,115,22,0.24)]">← →</span>
+                <span>Move</span>
+              </div>
+              <div className="grid w-44 grid-cols-[5.5rem_1fr] items-center gap-3 text-left">
+                <span className="inline-flex min-w-[5.5rem] justify-center rounded-md border border-orange-200/70 bg-black/35 px-2 py-1 font-semibold text-orange-300 shadow-[0_0_10px_rgba(249,115,22,0.24)]">↑ / X</span>
+                <span>Rotate</span>
+              </div>
+              <div className="grid w-44 grid-cols-[5.5rem_1fr] items-center gap-3 text-left">
+                <span className="inline-flex min-w-[5.5rem] justify-center rounded-md border border-orange-200/70 bg-black/35 px-2 py-1 font-semibold text-orange-300 shadow-[0_0_10px_rgba(249,115,22,0.24)]">Space</span>
+                <span>Drop</span>
+              </div>
+              <div className="grid w-44 grid-cols-[5.5rem_1fr] items-center gap-3 text-left">
+                <span className="inline-flex min-w-[5.5rem] justify-center rounded-md border border-orange-200/70 bg-black/35 px-2 py-1 font-semibold text-orange-300 shadow-[0_0_10px_rgba(249,115,22,0.24)]">P</span>
+                <span>Pause</span>
+              </div>
+            </div>
+          </div>
 
           {statusLabel !== "Ready" ? (
             <div className="mt-2 text-xs uppercase tracking-widest text-slate-200 md:mt-8 md:text-sm">
@@ -705,14 +714,60 @@ export default function App() {
         </div>
       </div>
 
+      {status === "idle" ? (
+        <div className="absolute inset-0 z-20 flex items-center justify-center bg-[#05000d]/70 px-4 backdrop-blur-sm">
+          <div className="glass w-full max-w-xl rounded-2xl p-8 text-center shadow-[0_0_45px_rgba(124,70,255,0.28)] md:p-12">
+            <p className="text-sm uppercase tracking-[0.35em] text-orange-300/70 md:text-base">
+              BrickDrop
+            </p>
+            <h2 className="mt-2 font-display text-5xl font-semibold uppercase text-white drop-shadow-[0_0_18px_rgba(255,255,255,0.35)] md:text-7xl">
+              Welcome
+            </h2>
+
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+              {TETROMINOES.map((tetromino) => (
+                <div
+                  key={tetromino.name}
+                  className="rounded-lg border border-violet-400/35 bg-black/30 p-2 shadow-[0_0_16px_rgba(124,70,255,0.18)]"
+                >
+                  <div className="grid grid-cols-4 gap-0.5">
+                    {tetromino.shape.flatMap((row, rowIndex) =>
+                      row.map((cell, colIndex) => (
+                        <div
+                          key={[tetromino.name, rowIndex, colIndex].join("-")}
+                          className={[
+                            "h-2.5 w-2.5 rounded-[2px] md:h-3 md:w-3",
+                            cell
+                              ? tetromino.color + " border border-black/20 shadow-[0_0_8px_rgba(255,255,255,0.22)]"
+                              : "bg-transparent",
+                          ].join(" ")}
+                        />
+                      ))
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <button
+              type="button"
+              onClick={startGame}
+              className="mt-7 w-full rounded-full border border-orange-200/70 bg-orange-400/95 px-6 py-3 text-sm font-semibold uppercase tracking-widest text-slate-950 shadow-[0_0_24px_rgba(249,115,22,0.48)] transition hover:-translate-y-0.5 hover:bg-orange-300 md:text-base"
+            >
+              Play
+            </button>
+          </div>
+        </div>
+      ) : null}
+
       {status === "gameover" ? (
         <div className="absolute inset-0 z-20 flex items-center justify-center bg-[#05000d]/55 px-4 backdrop-blur-sm">
           <div className="glass w-full max-w-md rounded-2xl p-6 text-center shadow-[0_0_45px_rgba(249,115,22,0.25)] md:p-8">
-            <p className="text-sm uppercase tracking-[0.35em] text-orange-300">
-              Game Over
-            </p>
-            <h2 className="mt-3 font-display text-4xl font-semibold uppercase text-white md:text-6xl">
+            <p className="text-sm uppercase tracking-[0.35em] text-orange-300/70 md:text-base">
               Brick Drop
+            </p>
+            <h2 className="mt-2 font-display text-5xl font-semibold uppercase text-white drop-shadow-[0_0_18px_rgba(255,255,255,0.35)] md:text-7xl">
+              Game Over
             </h2>
 
             <div className="mt-6 grid grid-cols-3 gap-3 text-slate-300">
