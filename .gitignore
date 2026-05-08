@@ -4,3 +4,11 @@ node_modules
 .env
 .env.local
 .vite
+
+# Local agent/template control files; never commit.
+AGENTS.md
+ModuleRules.md
+tools.md
+ai-rules/
+ai-docs/
+ai-scripts/
