@@ -182,6 +182,49 @@ const shuffle = (items) => {
   return copy;
 };
 
+const MobileArrowIcon = ({ direction }) => {
+  const rotation = {
+    left: 180,
+    right: 0,
+    down: 90,
+  }[direction];
+
+  if (direction === "rotate") {
+    return (
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 32 32"
+        className="h-8 w-8"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M24.5 15.5a8.5 8.5 0 1 1-3.2-6.7" />
+        <path d="M22 4.5v7h-7" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 32 32"
+      className="h-8 w-8"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      style={{ transform: `rotate(${rotation}deg)` }}
+    >
+      <path d="M6 16h20" />
+      <path d="M18 8l8 8-8 8" />
+    </svg>
+  );
+};
+
 export default function App() {
   const [board, setBoard] = useState(() => emptyBoard());
   const [active, setActive] = useState(() => randomPiece());
@@ -543,7 +586,7 @@ export default function App() {
   return (
     <div className="relative flex h-[100dvh] min-h-[100dvh] items-center overflow-hidden bg-gradient-to-br from-[#05000d] via-[#1b0a3d] to-[#060012] text-slate-100 md:h-screen md:min-h-screen md:px-6">
       <div className="flex h-full w-full flex-col md:hidden">
-        <section className="flex h-[60dvh] min-h-0 items-center justify-center px-4 pb-3 pt-[max(3rem,calc(env(safe-area-inset-top)+2.5rem))]">
+        <section className="flex h-[68dvh] min-h-0 items-center justify-center px-4 pb-3 pt-[max(1.5rem,calc(env(safe-area-inset-top)+1.25rem))]">
           <div className="relative shrink-0 overflow-hidden rounded-2xl">
             <div
               className="grid gap-0.5 rounded-2xl border border-violet-400/70 bg-black/40 p-1.5 shadow-[0_0_38px_rgba(92,60,160,0.48)]"
@@ -558,7 +601,7 @@ export default function App() {
                   return (
                     <div
                       key={`mobile-${rowIndex}-${colIndex}`}
-                      className={`relative aspect-square w-[min(calc((60dvh-6.5rem)/20),calc((100vw-3rem)/10))] rounded-sm ${
+                      className={`relative aspect-square w-[min(calc((68dvh-4.25rem)/20),calc((100vw-3rem)/10))] rounded-sm ${
                         cell === 0
                           ? "bg-black/40 border border-white/5 shadow-[0_0_8px_rgba(255,255,255,0.06)]"
                           : `${CELL_COLORS[cell]} border border-black/20`
@@ -595,19 +638,7 @@ export default function App() {
           </div>
         </section>
 
-        <section className="flex h-[40dvh] min-h-0 flex-col justify-center bg-black/10 px-[clamp(0.75rem,4vw,1rem)] pb-[max(1rem,env(safe-area-inset-bottom))] pt-[clamp(1.1rem,3dvh,2rem)]">
-          <div className="flex justify-center">
-            <button
-              type="button"
-              onClick={togglePause}
-              disabled={status !== "running" && status !== "paused"}
-              className={`mobile-control-button ${status === "paused" ? "mobile-control-resume" : "mobile-control-pause"} h-[clamp(2.25rem,5.5dvh,2.75rem)] min-w-28 rounded-full px-4 text-[11px] font-black uppercase tracking-widest text-white transition-transform`}
-            >
-              <span className="mr-2 text-sm">Ⅱ</span>
-              {status === "paused" ? "Resume" : "Pause"}
-            </button>
-          </div>
-
+        <section className="flex h-[32dvh] min-h-0 flex-col justify-center bg-black/10 px-[clamp(0.75rem,4vw,1rem)] pb-[max(1rem,env(safe-area-inset-bottom))] pt-[clamp(0.75rem,2dvh,1.25rem)]">
           <div className="mx-auto grid min-h-0 w-full max-w-[min(22rem,calc(100vw-1.5rem))] flex-1 grid-cols-[55%_auto] items-center justify-center gap-[clamp(0.75rem,4vw,1.25rem)] -translate-x-[clamp(0.5rem,6vw,1.55rem)]">
             <div className="grid min-w-0 grid-cols-3 grid-rows-2 justify-items-center gap-[clamp(0.45rem,1.4dvh,0.75rem)]">
               <button
@@ -617,17 +648,25 @@ export default function App() {
                 onPointerLeave={stopHorizontalHold}
                 onPointerCancel={stopHorizontalHold}
                 disabled={status !== "running" || isClearing}
-                className="mobile-control-button flex h-[clamp(2.75rem,8dvh,4rem)] w-[clamp(2.75rem,8dvh,4rem)] items-center justify-center rounded-2xl text-3xl font-black text-slate-950 transition-transform"
+                className="mobile-control-button flex h-[clamp(2.75rem,8dvh,4rem)] w-[clamp(2.75rem,8dvh,4rem)] items-center justify-center rounded-2xl text-slate-950 transition-transform"
               >
-                ←
+                <MobileArrowIcon direction="left" />
+              </button>
+              <button
+                type="button"
+                onClick={togglePause}
+                disabled={status !== "running" && status !== "paused"}
+                className="mobile-control-button mobile-control-pause col-start-2 flex h-[clamp(2.75rem,8dvh,4rem)] w-[clamp(2.75rem,8dvh,4rem)] items-center justify-center rounded-2xl text-2xl font-black text-white transition-transform"
+              >
+                {status === "paused" ? "▶" : "Ⅱ"}
               </button>
               <button
                 type="button"
                 onClick={hardDrop}
                 disabled={status !== "running" || isClearing}
-                className="mobile-control-button col-start-2 row-start-2 flex h-[clamp(2.75rem,8dvh,4rem)] w-[clamp(2.75rem,8dvh,4rem)] items-center justify-center rounded-2xl text-3xl font-black text-slate-950 transition-transform"
+                className="mobile-control-button col-start-2 row-start-2 flex h-[clamp(2.75rem,8dvh,4rem)] w-[clamp(2.75rem,8dvh,4rem)] items-center justify-center rounded-2xl text-slate-950 transition-transform"
               >
-                ↓
+                <MobileArrowIcon direction="down" />
               </button>
               <button
                 type="button"
@@ -636,9 +675,9 @@ export default function App() {
                 onPointerLeave={stopHorizontalHold}
                 onPointerCancel={stopHorizontalHold}
                 disabled={status !== "running" || isClearing}
-                className="mobile-control-button col-start-3 flex h-[clamp(2.75rem,8dvh,4rem)] w-[clamp(2.75rem,8dvh,4rem)] items-center justify-center rounded-2xl text-3xl font-black text-slate-950 transition-transform"
+                className="mobile-control-button col-start-3 flex h-[clamp(2.75rem,8dvh,4rem)] w-[clamp(2.75rem,8dvh,4rem)] items-center justify-center rounded-2xl text-slate-950 transition-transform"
               >
-                →
+                <MobileArrowIcon direction="right" />
               </button>
             </div>
 
@@ -647,9 +686,9 @@ export default function App() {
                 type="button"
                 onClick={rotate}
                 disabled={status !== "running" || isClearing}
-                className="mobile-control-button flex h-[clamp(4rem,12dvh,5.75rem)] w-[clamp(4rem,12dvh,5.75rem)] items-center justify-center rounded-full text-5xl font-black text-slate-950 transition-transform"
+                className="mobile-control-button flex h-[clamp(4rem,12dvh,5.75rem)] w-[clamp(4rem,12dvh,5.75rem)] items-center justify-center rounded-full text-slate-950 transition-transform"
               >
-                ↻
+                <MobileArrowIcon direction="rotate" />
               </button>
             </div>
           </div>
