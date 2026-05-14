@@ -2,6 +2,10 @@
 
 BrickDrop is a React and Vite falling-block game.
 
+## Architecture
+
+![BrickDrop architecture flow](assets/brickdrop-architecture-flow.png)
+
 ## Development
 
 ```bash
