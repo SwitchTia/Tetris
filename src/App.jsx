@@ -640,7 +640,7 @@ export default function App() {
 
         <section className="flex h-[32dvh] min-h-0 flex-col justify-center bg-black/10 px-[clamp(0.75rem,4vw,1rem)] pb-[max(1rem,env(safe-area-inset-bottom))] pt-[clamp(0.75rem,2dvh,1.25rem)]">
           <div className="mx-auto grid min-h-0 w-full max-w-[min(22rem,calc(100vw-1.5rem))] flex-1 grid-cols-[55%_auto] items-center justify-center gap-[clamp(0.75rem,4vw,1.25rem)] -translate-x-[clamp(0.5rem,6vw,1.55rem)]">
-            <div className="grid min-w-0 grid-cols-3 grid-rows-2 justify-items-center gap-[clamp(0.45rem,1.4dvh,0.75rem)]">
+            <div className="grid min-w-0 grid-cols-[repeat(3,clamp(2.75rem,8dvh,4rem))] grid-rows-[repeat(2,clamp(2.75rem,8dvh,4rem))] justify-center gap-[clamp(0.45rem,1.4dvh,0.75rem)]">
               <button
                 type="button"
                 onPointerDown={(event) => startHorizontalHold(-1, event)}
