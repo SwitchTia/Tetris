@@ -240,6 +240,9 @@ export default function App() {
   const clearTimeoutRef = useRef(null);
   const horizontalHoldTimeoutRef = useRef(null);
   const horizontalHoldIntervalRef = useRef(null);
+  const softDropTimeoutRef = useRef(null);
+  const softDropIntervalRef = useRef(null);
+  const softDropActionRef = useRef(() => {});
   const bagRef = useRef([]);
 
   const ghostPiece = useMemo(() => {
@@ -375,6 +378,14 @@ export default function App() {
     lockAndSpawn(active);
   };
 
+  const softDrop = () => {
+    if (status !== "running" || isClearing) return;
+    setScore((prev) => prev + 1);
+    stepDown();
+  };
+
+  softDropActionRef.current = softDrop;
+
   const moveHorizontally = (direction) => {
     setActive((prev) => {
       if (!prev) return prev;
@@ -404,6 +415,29 @@ export default function App() {
       horizontalHoldIntervalRef.current = setInterval(() => {
         moveHorizontally(direction);
       }, 65);
+    }, 140);
+  };
+
+  const stopSoftDropHold = () => {
+    if (softDropTimeoutRef.current) {
+      clearTimeout(softDropTimeoutRef.current);
+      softDropTimeoutRef.current = null;
+    }
+    if (softDropIntervalRef.current) {
+      clearInterval(softDropIntervalRef.current);
+      softDropIntervalRef.current = null;
+    }
+  };
+
+  const startSoftDropHold = (event) => {
+    event?.preventDefault();
+    if (status !== "running" || isClearing) return;
+    stopSoftDropHold();
+    softDropActionRef.current();
+    softDropTimeoutRef.current = setTimeout(() => {
+      softDropIntervalRef.current = setInterval(() => {
+        softDropActionRef.current();
+      }, 75);
     }, 140);
   };
 
@@ -496,12 +530,14 @@ export default function App() {
         clearTimeout(clearTimeoutRef.current);
       }
       stopHorizontalHold();
+      stopSoftDropHold();
     };
   }, []);
 
   useEffect(() => {
     if (status !== "running" || isClearing) {
       stopHorizontalHold();
+      stopSoftDropHold();
     }
   }, [status, isClearing]);
   
@@ -662,7 +698,10 @@ export default function App() {
               </button>
               <button
                 type="button"
-                onClick={hardDrop}
+                onPointerDown={startSoftDropHold}
+                onPointerUp={stopSoftDropHold}
+                onPointerLeave={stopSoftDropHold}
+                onPointerCancel={stopSoftDropHold}
                 disabled={status !== "running" || isClearing}
                 className="mobile-control-button col-start-2 row-start-2 flex h-[clamp(2.75rem,8dvh,4rem)] w-[clamp(2.75rem,8dvh,4rem)] items-center justify-center rounded-2xl text-slate-950 transition-[transform,box-shadow,background]"
               >
