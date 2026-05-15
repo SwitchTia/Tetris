@@ -193,16 +193,16 @@ const MobileArrowIcon = ({ direction }) => {
     return (
       <svg
         aria-hidden="true"
-        viewBox="0 0 32 32"
-        className="h-8 w-8"
+        viewBox="0 0 24 24"
+        className="h-9 w-9"
         fill="none"
         stroke="currentColor"
-        strokeWidth="4"
+        strokeWidth="2.6"
         strokeLinecap="round"
         strokeLinejoin="round"
       >
-        <path d="M24.5 15.5a8.5 8.5 0 1 1-3.2-6.7" />
-        <path d="M22 4.5v7h-7" />
+        <path d="M21 12a9 9 0 1 1-2.64-6.36L21 8" />
+        <path d="M21 3v5h-5" />
       </svg>
     );
   }
@@ -210,17 +210,17 @@ const MobileArrowIcon = ({ direction }) => {
   return (
     <svg
       aria-hidden="true"
-      viewBox="0 0 32 32"
-      className="h-8 w-8"
+      viewBox="0 0 24 24"
+      className="h-7 w-7"
       fill="none"
       stroke="currentColor"
-      strokeWidth="4"
+      strokeWidth="2.8"
       strokeLinecap="round"
       strokeLinejoin="round"
       style={{ transform: `rotate(${rotation}deg)` }}
     >
-      <path d="M6 16h20" />
-      <path d="M18 8l8 8-8 8" />
+      <path d="M5 12h14" />
+      <path d="M13 6l6 6-6 6" />
     </svg>
   );
 };
@@ -648,7 +648,7 @@ export default function App() {
                 onPointerLeave={stopHorizontalHold}
                 onPointerCancel={stopHorizontalHold}
                 disabled={status !== "running" || isClearing}
-                className="mobile-control-button flex h-[clamp(2.75rem,8dvh,4rem)] w-[clamp(2.75rem,8dvh,4rem)] items-center justify-center rounded-2xl text-slate-950 transition-transform"
+                className="mobile-control-button flex h-[clamp(2.75rem,8dvh,4rem)] w-[clamp(2.75rem,8dvh,4rem)] items-center justify-center rounded-2xl text-slate-950 transition-[transform,box-shadow,background]"
               >
                 <MobileArrowIcon direction="left" />
               </button>
@@ -664,7 +664,7 @@ export default function App() {
                 type="button"
                 onClick={hardDrop}
                 disabled={status !== "running" || isClearing}
-                className="mobile-control-button col-start-2 row-start-2 flex h-[clamp(2.75rem,8dvh,4rem)] w-[clamp(2.75rem,8dvh,4rem)] items-center justify-center rounded-2xl text-slate-950 transition-transform"
+                className="mobile-control-button col-start-2 row-start-2 flex h-[clamp(2.75rem,8dvh,4rem)] w-[clamp(2.75rem,8dvh,4rem)] items-center justify-center rounded-2xl text-slate-950 transition-[transform,box-shadow,background]"
               >
                 <MobileArrowIcon direction="down" />
               </button>
@@ -675,7 +675,7 @@ export default function App() {
                 onPointerLeave={stopHorizontalHold}
                 onPointerCancel={stopHorizontalHold}
                 disabled={status !== "running" || isClearing}
-                className="mobile-control-button col-start-3 flex h-[clamp(2.75rem,8dvh,4rem)] w-[clamp(2.75rem,8dvh,4rem)] items-center justify-center rounded-2xl text-slate-950 transition-transform"
+                className="mobile-control-button col-start-3 flex h-[clamp(2.75rem,8dvh,4rem)] w-[clamp(2.75rem,8dvh,4rem)] items-center justify-center rounded-2xl text-slate-950 transition-[transform,box-shadow,background]"
               >
                 <MobileArrowIcon direction="right" />
               </button>
@@ -686,7 +686,7 @@ export default function App() {
                 type="button"
                 onClick={rotate}
                 disabled={status !== "running" || isClearing}
-                className="mobile-control-button flex h-[clamp(4rem,12dvh,5.75rem)] w-[clamp(4rem,12dvh,5.75rem)] items-center justify-center rounded-full text-slate-950 transition-transform"
+                className="mobile-control-button flex h-[clamp(4rem,12dvh,5.75rem)] w-[clamp(4rem,12dvh,5.75rem)] items-center justify-center rounded-full text-slate-950 transition-[transform,box-shadow,background]"
               >
                 <MobileArrowIcon direction="rotate" />
               </button>
